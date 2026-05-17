@@ -219,17 +219,17 @@ html[lang="vi"] .hero-title {
 
 @keyframes scan {
   0% {
-    transform: translateY(-18%);
+    transform: translateY(-10%);
     opacity: 0;
   }
-  18% {
+  10% {
     opacity: 1;
   }
-  72% {
+  90% {
     opacity: 1;
   }
   100% {
-    transform: translateY(118%);
+    transform: translateY(420%);
     opacity: 0;
   }
 }

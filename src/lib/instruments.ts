@@ -82,12 +82,15 @@ export const instruments: Instrument[] = [
     relatedInstrumentIds: ["dan-bau", "trung", "sitar"],
     playableType: "horizontal-strings",
     notes: [
+      { label: "C", frequency: 261.63, tone: "silk" },
       { label: "D", frequency: 293.66, tone: "silk" },
       { label: "E", frequency: 329.63, tone: "jade" },
       { label: "G", frequency: 392, tone: "river" },
       { label: "A", frequency: 440, tone: "paper" },
       { label: "B", frequency: 493.88, tone: "light" },
-      { label: "D", frequency: 587.33, tone: "air" },
+      { label: "C'", frequency: 523.25, tone: "air" },
+      { label: "D'", frequency: 587.33, tone: "silk" },
+      { label: "E'", frequency: 659.25, tone: "jade" },
     ],
   },
   {

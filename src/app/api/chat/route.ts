@@ -37,7 +37,13 @@ NHẠC CỤ ĐANG HỖ TRỢ TRONG KHO (Dùng thông tin này để kể chuyệ
 ${getInstrumentContext()}`;
 
 export async function POST(request: Request) {
-  const apiKey = "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";
+  const apiKey = process.env.OPENROUTER_API_KEY ?? "";
+
+  if (!apiKey) {
+    return NextResponse.json({
+      reply: "Hướng dẫn viên đang bảo trì. Bạn vẫn có thể tự do khám phá kho lưu trữ.",
+    });
+  }
 
   let body: { messages?: { role: string; content: string }[] };
   try {

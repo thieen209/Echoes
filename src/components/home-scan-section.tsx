@@ -86,13 +86,17 @@ export function HomeScanSection() {
       streamRef.current = stream;
       setCameraMode(true);
 
-      // Wait for video element to be mounted
-      requestAnimationFrame(() => {
+      // Retry attaching stream until video element is mounted (fixes double-click)
+      const attachStream = (retries = 10) => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
-          videoRef.current.play();
+          videoRef.current.play().catch(() => {});
+        } else if (retries > 0) {
+          setTimeout(() => attachStream(retries - 1), 50);
         }
-      });
+      };
+      // Use setTimeout to ensure React has flushed the state update
+      setTimeout(() => attachStream(), 0);
     } catch (err) {
       // Camera permission denied or unavailable — fallback to file input
       cameraRef.current?.click();

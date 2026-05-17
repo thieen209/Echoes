@@ -44,10 +44,11 @@ export function EchoesLogo({
           }
           style={{
             height: size,
-            width,
+            width: "auto",
             filter: "drop-shadow(0 0 24px rgba(200,169,107,0.22))",
           }}
           priority={priority}
+          loading="eager"
         />
       </span>
       {showWordmark ? (
@@ -56,7 +57,7 @@ export function EchoesLogo({
             Echoes
           </span>
           <span className="mt-1 block truncate text-[0.65rem] uppercase tracking-[0.28em] text-muted">
-            Interactive cultural archive
+            Kho lưu trữ văn hóa tương tác
           </span>
         </span>
       ) : null}
@@ -93,8 +94,9 @@ export function EchoesLogoMark({
         alt="Echoes"
         width={Math.round(size * LOGO_ASPECT_RATIO)}
         height={size}
-        className="h-auto object-contain drop-shadow-[0_0_48px_rgba(200,169,107,0.35)]"
+        className="h-auto w-auto object-contain drop-shadow-[0_0_48px_rgba(200,169,107,0.35)]"
         priority={priority}
+        loading="eager"
       />
     </div>
   );

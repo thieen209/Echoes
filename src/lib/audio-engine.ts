@@ -42,7 +42,20 @@ class EchoesAudioEngine {
     if (!Ctor) return null;
     this.ctx = new Ctor();
     this.buildMasterChain();
+    this.setupVisibilityHandling();
     return this.ctx;
+  }
+
+  private setupVisibilityHandling() {
+    const resume = () => {
+      if (this.ctx && this.ctx.state === "suspended") {
+        this.ctx.resume();
+      }
+    };
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") resume();
+    });
+    window.addEventListener("focus", resume);
   }
 
   private buildMasterChain() {

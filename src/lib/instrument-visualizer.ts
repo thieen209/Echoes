@@ -1,4 +1,5 @@
 import type { PlayableType } from "./instruments";
+import { audioEngine } from "./audio-engine";
 
 interface Theme {
   primary: string;
@@ -83,7 +84,8 @@ export class InstrumentVisualizer {
     this.ctx = canvas.getContext("2d")!;
     this.type = type;
     this.theme = THEMES[type];
-    this.dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // Cap DPR at 1.5 for mobile performance
+    this.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     this.resize();
     this.initStrings();
     this.animate();
@@ -102,16 +104,16 @@ export class InstrumentVisualizer {
     this.strings = [];
     const count =
       this.type === "single-string" ? 1 :
-      this.type === "horizontal-strings" ? 6 :
+      this.type === "horizontal-strings" ? 9 :
       this.type === "bamboo-bars" ? 6 :
       this.type === "minimal-pluck" ? 3 :
       6;
-    const segments = 60;
+    const segments = 40;
     for (let i = 0; i < count; i++) {
       this.strings.push({
         points: new Array(segments).fill(0),
         velocity: new Array(segments).fill(0),
-        damping: 0.992,
+        damping: 0.99,
         active: false,
         brightness: 0,
       });
@@ -473,7 +475,7 @@ export class InstrumentVisualizer {
   }
 
   private drawAnalyserBars(ctx: CanvasRenderingContext2D, w: number, h: number) {
-    const barCount = 48;
+    const barCount = 32;
     const barW = w / barCount;
     const maxH = h * 0.2;
     const y0 = h;
@@ -482,7 +484,6 @@ export class InstrumentVisualizer {
     let micAmp = 0;
 
     try {
-      const { audioEngine } = require("./audio-engine");
       freqData = audioEngine.getFrequencyData();
       if (audioEngine.isMicActive()) {
         micAmp = audioEngine.getMicAmplitude();

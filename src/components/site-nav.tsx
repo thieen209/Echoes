@@ -105,20 +105,37 @@ export function SiteNav() {
               })}
             </motion.div>
             <div className="hidden items-center gap-3 sm:flex">
-              <button
-                type="button"
-                className="group relative overflow-hidden rounded-full border border-gold/40 bg-gradient-to-b from-gold/10 to-transparent px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold transition-all hover:scale-105 hover:border-gold hover:text-white hover:shadow-[0_0_25px_rgba(200,169,107,0.4)] active:scale-95 flex items-center gap-2"
-                onClick={() =>
-                  requireAuth(() => {
-                    window.location.href = "/#scan";
-                  })
-                }
-              >
-                {/* Glow sweep effect */}
-                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
-                <ScanLine size={16} aria-hidden="true" className="group-hover:animate-pulse" />
-                <span>Quét ngay</span>
-              </button>
+              {user ? (
+                <div className="flex items-center gap-4">
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-2 pr-4 text-xs transition hover:bg-white/10"
+                  >
+                    <div className="grid size-6 place-items-center overflow-hidden rounded-full bg-gold/20 text-gold">
+                      {user.picture ? (
+                        <img src={user.picture} alt="" className="size-full object-cover" />
+                      ) : (
+                        <span className="font-epic text-[10px] uppercase">{user.name?.charAt(0) || "U"}</span>
+                      )}
+                    </div>
+                    <span className="max-w-[100px] truncate text-muted group-hover:text-foreground">{user.name}</span>
+                  </Link>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  className="group relative flex items-center gap-2 overflow-hidden rounded-full border border-gold/40 bg-gradient-to-b from-gold/10 to-transparent px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.25em] text-gold transition-all hover:scale-105 hover:border-gold hover:text-white hover:shadow-[0_0_25px_rgba(200,169,107,0.4)] active:scale-95"
+                  onClick={() =>
+                    requireAuth(() => {
+                      window.location.href = "/#scan";
+                    })
+                  }
+                >
+                  <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-700 ease-in-out group-hover:translate-x-full" />
+                  <ScanLine size={16} aria-hidden="true" className="group-hover:animate-pulse" />
+                  <span>Quét ngay</span>
+                </button>
+              )}
             </div>
             <button
               type="button"

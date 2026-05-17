@@ -6,7 +6,7 @@ import { audioEngine } from "@/lib/audio-engine";
 import { InstrumentVisualizer } from "@/lib/instrument-visualizer";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { AnimatePresence, motion } from "framer-motion";
-import { Maximize2, Mic, Minimize2, Volume2, X } from "lucide-react";
+import { Lock, Maximize2, Mic, Minimize2, Volume2, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type PlayableInstrumentProps = {
@@ -14,7 +14,7 @@ type PlayableInstrumentProps = {
 };
 
 export function PlayableInstrument({ instrument }: PlayableInstrumentProps) {
-  const { requireAuth } = useAuth();
+  const { requireAuth, user } = useAuth();
   const { t } = useLocale();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const vizRef = useRef<InstrumentVisualizer | null>(null);
@@ -49,17 +49,22 @@ export function PlayableInstrument({ instrument }: PlayableInstrumentProps) {
     };
   }, [instrument.playableType]);
 
-  // Amplitude tracking loop
+  // Amplitude tracking loop (throttled state updates)
   useEffect(() => {
+    let frameCount = 0;
     const tick = () => {
       const a = audioEngine.getAmplitude();
       const mic = audioEngine.getMicAmplitude();
       const combined = Math.max(a, mic * 0.45);
       amplitudeRef.current = a;
       vizRef.current?.setAmplitude(combined);
-      setAmplitude(combined);
-      setMicActive(audioEngine.isMicActive());
-      setSpectrumPhase((phase) => (phase + 0.12) % (Math.PI * 2));
+      // Only update React state every 3rd frame to reduce re-renders
+      frameCount++;
+      if (frameCount % 3 === 0) {
+        setAmplitude(combined);
+        setMicActive(audioEngine.isMicActive());
+        setSpectrumPhase((phase) => (phase + 0.36) % (Math.PI * 2));
+      }
       ampFrameRef.current = requestAnimationFrame(tick);
     };
     ampFrameRef.current = requestAnimationFrame(tick);
@@ -229,7 +234,7 @@ export function PlayableInstrument({ instrument }: PlayableInstrumentProps) {
           />
 
           {/* Instrument-specific interactive overlays */}
-          <div className="relative z-10 flex h-full min-h-[inherit] flex-col">
+          <div className={`relative z-10 flex h-full min-h-[inherit] flex-col transition-all duration-700 ${!user ? "blur-[3px] opacity-50 pointer-events-none" : ""}`}>
             {instrument.playableType === "single-string" && (
               <SingleStringUI
                 instrument={instrument}
@@ -273,6 +278,28 @@ export function PlayableInstrument({ instrument }: PlayableInstrumentProps) {
               />
             )}
           </div>
+
+          {/* Locked State Overlay */}
+          {!user && (
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/10 backdrop-blur-[1px]">
+              <motion.button
+                onClick={() => requireAuth(() => {})}
+                className="group flex flex-col items-center gap-3"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <div className="grid size-12 place-items-center rounded-full border border-gold/30 bg-gold/10 text-gold shadow-[0_0_30px_rgba(200,169,107,0.2)] transition-all group-hover:border-gold/60 group-hover:bg-gold/20 group-hover:shadow-[0_0_40px_rgba(200,169,107,0.3)]">
+                  <Lock size={18} />
+                </div>
+                <div className="text-center">
+                  <p className="text-xs uppercase tracking-[0.2em] text-gold/90 transition-colors group-hover:text-gold">Mở khóa tương tác</p>
+                  <p className="mt-1 text-[0.7rem] text-white/50 transition-colors group-hover:text-white/70">Đăng nhập để trải nghiệm âm thanh</p>
+                </div>
+              </motion.button>
+            </div>
+          )}
         </div>
 
         {/* Status bar */}
@@ -451,7 +478,7 @@ function BambooBarsUI({ instrument, activeNote, onPlay, isFullscreen }: Instrume
           <motion.button
             key={`${note.label}-${index}`}
             type="button"
-            className="group relative flex w-full min-w-[2rem] max-w-[4rem] flex-col items-center justify-end overflow-hidden rounded-t-md border border-transparent pb-2 transition-all hover:border-[rgba(184,134,11,0.4)] sm:pb-3"
+            className="group relative flex w-full min-w-0 max-w-[4rem] flex-col items-center justify-end overflow-hidden rounded-t-md border border-transparent pb-2 transition-all hover:border-[rgba(184,134,11,0.4)] sm:min-w-[2rem] sm:pb-3"
             style={{ height: `${heightPercent}%` }}
             animate={{
               borderColor: isActive
@@ -545,10 +572,10 @@ function ResonantNotesUI({ instrument, activeNote, onPlay }: InstrumentUIProps) 
               type="button"
               className="absolute grid place-items-center rounded-full border transition-colors"
               style={{
-                left: `calc(50% + ${Math.cos(angle) * 37}% - 1.125rem)`,
-                top: `calc(50% + ${Math.sin(angle) * 37}% - 1.125rem)`,
-                width: "2.25rem",
-                height: "2.25rem",
+                left: `calc(50% + ${Math.cos(angle) * 37}% - 1rem)`,
+                top: `calc(50% + ${Math.sin(angle) * 37}% - 1rem)`,
+                width: "2rem",
+                height: "2rem",
               }}
               animate={{
                 borderColor: isActive ? "rgba(232,168,56,0.7)" : "rgba(232,168,56,0.2)",

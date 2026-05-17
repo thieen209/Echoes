@@ -30,7 +30,7 @@ export function RootEffects() {
 
   return (
     <>
-      <AmbientParticles density={40} />
+      <AmbientParticles density={20} />
       <div className="cursor-glow hidden lg:block" aria-hidden="true" />
       <motion.div
         className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[2px] origin-left bg-gradient-to-r from-gold/5 via-gold to-bronze"

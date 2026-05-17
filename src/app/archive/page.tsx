@@ -17,10 +17,10 @@ const regionMatchers: RegionEntry[] = [
   {
     key: "southeastAsia",
     match: (item) =>
-      ["Vietnam"].includes(item.originCountry) && item.id !== "shamisen",
+      ["Vietnam", "Việt Nam"].includes(item.originCountry) && item.id !== "shamisen",
   },
-  { key: "eastAsia", match: (item) => item.originCountry === "Japan" },
-  { key: "southAsia", match: (item) => item.originCountry === "India" },
+  { key: "eastAsia", match: (item) => ["Japan", "Nhật Bản"].includes(item.originCountry) },
+  { key: "southAsia", match: (item) => ["India", "Ấn Độ"].includes(item.originCountry) },
 ];
 
 export default function ArchivePage() {
