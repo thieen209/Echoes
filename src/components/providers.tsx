@@ -2,7 +2,7 @@
 
 import { AuthModal } from "@/components/auth-modal";
 import { CulturalGuideChat } from "@/components/cultural-guide-chat";
-import { AuthProvider } from "@/lib/auth-context";
+import { AuthProvider } from "@/context/AuthProvider";
 import { LocaleProvider } from "@/lib/i18n/locale-context";
 import type { ReactNode } from "react";
 

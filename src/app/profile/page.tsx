@@ -2,7 +2,7 @@
 
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/hooks/useAuth";
 import { motion } from "framer-motion";
 import { Camera, Save, User as UserIcon, LogOut, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -22,10 +22,10 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) {
-      router.replace("/auth/sign-in");
+      router.replace("/login");
     } else {
-      setName(user.name);
-      setPictureUrl(user.picture);
+      setName(user.user_metadata?.full_name || user.user_metadata?.name || "Người lưu trữ");
+      setPictureUrl(user.user_metadata?.avatar_url || user.user_metadata?.picture || "");
     }
   }, [user, router]);
 
@@ -95,7 +95,7 @@ export default function ProfilePage() {
                   </div>
                 )}
               </div>
-              <h2 className="font-epic text-xl text-foreground">{user.name}</h2>
+              <h2 className="font-epic text-xl text-foreground">{user.user_metadata?.full_name || user.user_metadata?.name || "Người lưu trữ"}</h2>
               <p className="mt-1 text-xs text-muted/70">{user.email}</p>
               
               <div className="mt-6 flex w-full flex-col gap-3">
@@ -110,8 +110,8 @@ export default function ProfilePage() {
                   <button
                     onClick={() => {
                       setIsEditing(false);
-                      setName(user.name);
-                      setPictureUrl(user.picture);
+                      setName(user.user_metadata?.full_name || user.user_metadata?.name || "Người lưu trữ");
+                      setPictureUrl(user.user_metadata?.avatar_url || user.user_metadata?.picture || "");
                       setMessage({ text: "", type: "" });
                     }}
                     className="w-full rounded-lg border border-white/10 bg-white/5 py-2.5 text-xs uppercase tracking-[0.15em] text-muted transition hover:bg-white/10 hover:text-foreground"
@@ -183,7 +183,7 @@ export default function ProfilePage() {
                   </div>
                 )}
 
-                {user.provider === "google" && !isEditing && (
+                {user.app_metadata?.provider === "google" && !isEditing && (
                   <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-4">
                     <p className="text-xs text-blue-400/80">
                       Tài khoản được liên kết với Google. Một số thông tin được đồng bộ tự động.

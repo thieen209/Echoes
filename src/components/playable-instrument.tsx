@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/hooks/useAuth";
 import type { Instrument, InstrumentNote } from "@/lib/instruments";
 import { audioEngine } from "@/lib/audio-engine";
 import { InstrumentVisualizer } from "@/lib/instrument-visualizer";

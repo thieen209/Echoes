@@ -1,7 +1,7 @@
 "use client";
 
 import { EchoesLogoMark } from "@/components/echoes-logo";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/hooks/useAuth";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Lock, Scan, Music, Bookmark, X } from "lucide-react";
 import Link from "next/link";
@@ -215,7 +215,7 @@ export function AuthModal() {
               >
                 {/* Google — Primary */}
                 <Link
-                  href="/auth/sign-in"
+                  href="/login"
                   onClick={dismissAuthModal}
                   className={`group relative flex w-full items-center justify-center gap-2.5 overflow-hidden rounded-xl py-3.5 text-[0.78rem] font-medium tracking-wide transition-all ${
                     agreed
@@ -263,7 +263,7 @@ export function AuthModal() {
 
                 {/* Email */}
                 <Link
-                  href="/auth/sign-in"
+                  href="/login"
                   onClick={dismissAuthModal}
                   className={`flex w-full items-center justify-center gap-2.5 rounded-xl py-3 text-[0.78rem] tracking-wide transition-all ${
                     agreed

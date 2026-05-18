@@ -15,9 +15,23 @@ export function AuthChrome({
   children: ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
+  const [particles, setParticles] = useState<Record<string, number>[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    setParticles(
+      Array.from({ length: 15 }).map(() => ({
+        size: Math.random() * 3 + 1,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        opacity: Math.random() * 0.5 + 0.1,
+        animY: -(Math.random() * 200 + 100),
+        animX: (Math.random() - 0.5) * 100,
+        animOp: Math.random() * 0.8,
+        duration: Math.random() * 10 + 10,
+        delay: Math.random() * 10,
+      }))
+    );
   }, []);
 
   return (
@@ -78,27 +92,27 @@ export function AuthChrome({
 
       {/* 4. Drifting Dust Particles */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        {mounted && Array.from({ length: 15 }).map((_, i) => (
+        {mounted && particles.map((p, i) => (
           <motion.div
             key={i}
             className="absolute rounded-full bg-[#C8A96B]"
             style={{
-              width: Math.random() * 3 + 1 + "px",
-              height: Math.random() * 3 + 1 + "px",
-              left: Math.random() * 100 + "%",
-              top: Math.random() * 100 + "%",
-              opacity: Math.random() * 0.5 + 0.1,
+              width: p.size + "px",
+              height: p.size + "px",
+              left: p.left + "%",
+              top: p.top + "%",
+              opacity: p.opacity,
             }}
             animate={{
-              y: [0, -(Math.random() * 200 + 100)],
-              x: [0, (Math.random() - 0.5) * 100],
-              opacity: [0, Math.random() * 0.8, 0],
+              y: [0, p.animY],
+              x: [0, p.animX],
+              opacity: [0, p.animOp, 0],
             }}
             transition={{
-              duration: Math.random() * 10 + 10,
+              duration: p.duration,
               repeat: Infinity,
               ease: "linear",
-              delay: Math.random() * 10,
+              delay: p.delay,
             }}
           />
         ))}

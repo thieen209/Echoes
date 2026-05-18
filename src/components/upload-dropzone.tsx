@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/hooks/useAuth";
 import { uploadStorageKey, type StoredUpload } from "@/lib/detection-types";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { instruments } from "@/lib/instruments";

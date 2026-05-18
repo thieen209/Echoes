@@ -1,7 +1,7 @@
 "use client";
 
 import { EchoesLogo } from "@/components/echoes-logo";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/hooks/useAuth";
 import { useLocale } from "@/lib/i18n/locale-context";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -112,13 +112,13 @@ export function SiteNav() {
                     className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1.5 pl-2 pr-4 text-xs transition hover:bg-white/10"
                   >
                     <div className="grid size-6 place-items-center overflow-hidden rounded-full bg-gold/20 text-gold">
-                      {user.picture ? (
-                        <img src={user.picture} alt="" className="size-full object-cover" />
+                      {user.user_metadata?.avatar_url || user.user_metadata?.picture ? (
+                        <img src={user.user_metadata?.avatar_url || user.user_metadata?.picture} alt="" className="size-full object-cover" />
                       ) : (
-                        <span className="font-epic text-[10px] uppercase">{user.name?.charAt(0) || "U"}</span>
+                        <span className="font-epic text-[10px] uppercase">{(user.user_metadata?.full_name || user.user_metadata?.name || "U").charAt(0)}</span>
                       )}
                     </div>
-                    <span className="max-w-[100px] truncate text-muted group-hover:text-foreground">{user.name}</span>
+                    <span className="max-w-[100px] truncate text-muted group-hover:text-foreground">{user.user_metadata?.full_name || user.user_metadata?.name || "Người lưu trữ"}</span>
                   </Link>
                 </div>
               ) : (
@@ -189,7 +189,7 @@ export function SiteNav() {
               {/* User Info */}
               {user && (
                 <div className="border-b border-white/10 px-6 py-4">
-                  <p className="text-sm text-foreground">{user.name}</p>
+                  <p className="text-sm text-foreground">{user.user_metadata?.full_name || user.user_metadata?.name || "Người lưu trữ"}</p>
                   <p className="mt-0.5 text-xs text-muted">{user.email}</p>
                 </div>
               )}
