@@ -37,7 +37,7 @@ NHẠC CỤ ĐANG HỖ TRỢ TRONG KHO (Dùng thông tin này để kể chuyệ
 ${getInstrumentContext()}`;
 
 export async function POST(request: Request) {
-  const apiKey = process.env.OPENROUTER_API_KEY ?? "";
+  const apiKey = process.env.GROQ_API_KEY || "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";
 
   if (!apiKey) {
     return NextResponse.json({
@@ -68,14 +68,14 @@ export async function POST(request: Request) {
       }))
     ];
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "meta-llama/llama-3.1-8b-instruct",
+        model: "llama-3.3-70b-versatile",
         messages: formattedMessages,
         temperature: 0.7,
       })
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("OpenRouter API Error:", errText);
+      console.error("Groq API Error:", errText);
       throw new Error(`API returned ${response.status}`);
     }
 
