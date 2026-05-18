@@ -55,16 +55,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const requireAuth = useCallback((callback?: () => void): boolean => {
-    if (user) {
-      callback?.()
-      return true
-    }
-    if (callback) {
-      setPendingCallback(() => callback)
-    }
-    setShowAuthModal(true)
-    return false
-  }, [user])
+    // TEMPORARY: Bypass auth for maintenance, allowing all users to experience features
+    callback?.()
+    return true
+  }, [])
 
   const dismissAuthModal = useCallback(() => {
     setShowAuthModal(false)

@@ -234,7 +234,7 @@ export function PlayableInstrument({ instrument }: PlayableInstrumentProps) {
           />
 
           {/* Instrument-specific interactive overlays */}
-          <div className={`relative z-10 flex h-full min-h-[inherit] flex-col transition-all duration-700 ${!user ? "blur-[3px] opacity-50 pointer-events-none" : ""}`}>
+          <div className={`relative z-10 flex h-full min-h-[inherit] flex-col transition-all duration-700`}>
             {instrument.playableType === "single-string" && (
               <SingleStringUI
                 instrument={instrument}
@@ -279,27 +279,7 @@ export function PlayableInstrument({ instrument }: PlayableInstrumentProps) {
             )}
           </div>
 
-          {/* Locked State Overlay */}
-          {!user && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/10 backdrop-blur-[1px]">
-              <motion.button
-                onClick={() => requireAuth(() => {})}
-                className="group flex flex-col items-center gap-3"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <div className="grid size-12 place-items-center rounded-full border border-gold/30 bg-gold/10 text-gold shadow-[0_0_30px_rgba(200,169,107,0.2)] transition-all group-hover:border-gold/60 group-hover:bg-gold/20 group-hover:shadow-[0_0_40px_rgba(200,169,107,0.3)]">
-                  <Lock size={18} />
-                </div>
-                <div className="text-center">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gold/90 transition-colors group-hover:text-gold">Mở khóa tương tác</p>
-                  <p className="mt-1 text-[0.7rem] text-white/50 transition-colors group-hover:text-white/70">Đăng nhập để trải nghiệm âm thanh</p>
-                </div>
-              </motion.button>
-            </div>
-          )}
+
         </div>
 
         {/* Status bar */}

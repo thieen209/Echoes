@@ -197,9 +197,7 @@ export function HomeScanSection() {
             <p className="mt-6 max-w-xl text-lg leading-8 text-muted">
               {t.scan.body}
             </p>
-            {!user ? (
-              <p className="mt-4 text-sm text-gold/80">{t.scan.previewOnly}</p>
-            ) : null}
+
             <div className="mt-8 flex flex-wrap gap-3">
               <input
                 ref={fileRef}

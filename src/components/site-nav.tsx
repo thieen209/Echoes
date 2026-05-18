@@ -266,13 +266,10 @@ export function SiteNav() {
                 ) : (
                   <button
                     type="button"
-                    className="museum-button w-full justify-center py-2.5 text-sm"
-                    onClick={() => {
-                      setOpen(false);
-                      requireAuth();
-                    }}
+                    disabled
+                    className="museum-button w-full justify-center py-2.5 text-sm opacity-50 cursor-not-allowed"
                   >
-                    {t.nav.signIn}
+                    Đăng nhập (Bảo trì)
                   </button>
                 )}
               </div>
