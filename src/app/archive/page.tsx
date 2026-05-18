@@ -8,12 +8,7 @@ export default function ArchivePage() {
   const { user, loading } = useAuth()
   const router = useRouter()
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login')
-    }
-  }, [user, loading, router])
-
+  // TEMPORARY: Removed auth redirect to allow public access to the archive
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black text-yellow-100">

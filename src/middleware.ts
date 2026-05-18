@@ -14,7 +14,7 @@ export async function middleware(req: NextRequest) {
     data: { session }
   } = await supabase.auth.getSession()
 
-  const protectedRoutes = ['/archive']
+  const protectedRoutes: string[] = []
 
   const isProtected = protectedRoutes.some((route) =>
     req.nextUrl.pathname.startsWith(route)
