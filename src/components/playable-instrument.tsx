@@ -452,7 +452,7 @@ function BambooBarsUI({ instrument, activeNote, onPlay, isFullscreen }: Instrume
   return (
     <div className={`flex flex-1 items-end justify-center gap-2 sm:gap-3 ${isFullscreen ? "px-6 pb-8 sm:px-10 sm:pb-10" : "px-4 pb-5 sm:px-6 sm:pb-6"}`}>
       {instrument.notes.map((note, index) => {
-        const heightPercent = 35 + index * 11;
+        const heightPercent = 40 + (index / Math.max(1, instrument.notes.length - 1)) * 55;
         const isActive = activeNote === note.label;
         return (
           <motion.button
