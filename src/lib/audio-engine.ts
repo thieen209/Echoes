@@ -21,7 +21,7 @@ class EchoesAudioEngine {
   private samplers: Partial<Record<PlayableType, Tone.Sampler>> = {};
   
   // Advanced physically modeled synths as fallback while samples load or if samples are missing
-  private fallbacks: Partial<Record<PlayableType, Tone.PolySynth>> = {};
+  private fallbacks: Partial<Record<PlayableType, Tone.PolySynth | Tone.PluckSynth>> = {};
 
   async ensureContext(): Promise<boolean> {
     if (this.isInitialized) {
@@ -133,7 +133,7 @@ class EchoesAudioEngine {
       modulationEnvelope: { attack: 0.05, decay: 0.2, sustain: 0.2, release: 1.5 }
     }).connect(Tone.Destination);
 
-    this.fallbacks["horizontal-strings"] = new Tone.PolySynth(Tone.PluckSynth, {
+    this.fallbacks["horizontal-strings"] = new Tone.PluckSynth({
       attackNoise: 1,
       dampening: 4000,
       resonance: 0.9
@@ -146,7 +146,7 @@ class EchoesAudioEngine {
       envelope: { attack: 0.001, decay: 0.4, sustain: 0.01, release: 0.5 }
     }).connect(Tone.Destination);
 
-    this.fallbacks["minimal-pluck"] = new Tone.PolySynth(Tone.PluckSynth, {
+    this.fallbacks["minimal-pluck"] = new Tone.PluckSynth({
       attackNoise: 2,
       dampening: 2000,
       resonance: 0.7
@@ -170,6 +170,18 @@ class EchoesAudioEngine {
       sum += Math.abs(values[i] as number);
     }
     return sum / values.length;
+  }
+
+  getFrequencyData(): Uint8Array | null {
+    if (!this.analyser) return null;
+    // Switch analyser to fft mode temporarily isn't ideal;
+    // instead we approximate from waveform data
+    const values = this.analyser.getValue();
+    const out = new Uint8Array(values.length);
+    for (let i = 0; i < values.length; i++) {
+      out[i] = Math.min(255, Math.round(Math.abs(values[i] as number) * 255));
+    }
+    return out;
   }
 
   isMicActive(): boolean {
@@ -214,7 +226,12 @@ class EchoesAudioEngine {
     if (sampler && sampler.loaded) {
       sampler.triggerAttackRelease(freq, 2, now, velocity);
     } else if (fallback) {
-      fallback.triggerAttackRelease(freq, 1.5, now, velocity);
+      if (fallback instanceof Tone.PluckSynth) {
+        // PluckSynth only accepts (note, time) — no duration or velocity
+        fallback.triggerAttackRelease(freq, now);
+      } else {
+        fallback.triggerAttackRelease(freq, 1.5, now, velocity);
+      }
     }
   }
 }
