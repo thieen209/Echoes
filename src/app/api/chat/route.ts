@@ -203,9 +203,9 @@ function getLocalFallbackReply(userText: string): string {
 }
 
 export async function POST(request: Request) {
-  // Use real key if provided in environment, or use hardcoded placeholder
-  const hasEnvKey = !!process.env.GROQ_API_KEY;
-  const apiKey = process.env.GROQ_API_KEY || "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";
+  const openrouterKey = process.env.OPENROUTER_API_KEY;
+  const groqKey = process.env.GROQ_API_KEY;
+  const hasEnvKey = !!(openrouterKey || groqKey);
 
   let body: { messages?: { role: string; content: string }[] };
   try {
@@ -221,7 +221,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ reply: "" });
   }
 
-  // If there's no real environment key configured, bypass the API call entirely to save latency and avoid unnecessary 401s
+  // If there are no environment keys configured, bypass API calls entirely to save latency and avoid unnecessary errors
   if (!hasEnvKey) {
     const fallbackReply = getLocalFallbackReply(userText);
     return NextResponse.json({ reply: fallbackReply });
@@ -236,22 +236,40 @@ export async function POST(request: Request) {
       }))
     ];
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
-        messages: formattedMessages,
-        temperature: 0.7,
-      })
-    });
+    let response;
+    if (openrouterKey) {
+      response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${openrouterKey}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://echoes.studio",
+          "X-Title": "Echoes Studio"
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-3.1-8b-instruct",
+          messages: formattedMessages,
+          temperature: 0.7,
+        })
+      });
+    } else {
+      response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${groqKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: formattedMessages,
+          temperature: 0.7,
+        })
+      });
+    }
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("Groq API Error:", errText);
+      console.error("Chat API Error details:", errText);
       throw new Error(`API returned ${response.status}`);
     }
 
@@ -261,8 +279,9 @@ export async function POST(request: Request) {
     
   } catch (e) {
     console.error("Chat API Error, falling back to local guide logic:", e);
-    // If the API call fails (e.g. rate limit, invalid key), return our smart local fallback response instead of the generic error message
+    // If the API call fails (e.g. rate limit, invalid key), return our smart local fallback response instead of a generic error message
     const fallbackReply = getLocalFallbackReply(userText);
     return NextResponse.json({ reply: fallbackReply });
   }
 }
+

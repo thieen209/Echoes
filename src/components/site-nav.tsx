@@ -81,8 +81,8 @@ export function SiteNav() {
                   item.href === "/"
                     ? pathname === "/"
                     : item.href === "/#scan"
-                      ? pathname === "/" || pathname === "/upload"
-                      : pathname.startsWith(item.href.replace("/#scan", ""));
+                      ? false
+                      : pathname.startsWith(item.href);
 
                 return (
                   <Link
